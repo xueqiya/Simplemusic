@@ -2,7 +2,7 @@ package com.example.simplemusic.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;

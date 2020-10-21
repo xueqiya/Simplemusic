@@ -3,15 +3,15 @@ package com.example.simplemusic.activity;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,12 +42,6 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
         //初始化
         initActivity();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(mServiceConnection);
     }
 
     // 控件监听
@@ -219,5 +213,11 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         super.finish();
         //界面退出时的动画
         overridePendingTransition(R.anim.bottom_silent, R.anim.bottom_out);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
     }
 }
