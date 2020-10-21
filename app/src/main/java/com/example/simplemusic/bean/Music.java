@@ -6,13 +6,11 @@ public class Music {
     public String artist;     //歌手
     public String title;      //歌曲名
     public String songUrl;    //歌曲地址
-    public String imgUrl;     //专辑图片地址
 
-    public Music(String songUrl, String title, String artist, String imgUrl) {
+    public Music(String songUrl, String title, String artist) {
         this.title = title;
         this.artist = artist;
         this.songUrl = songUrl;
-        this.imgUrl = imgUrl;
     }
 
     //重写equals方法, 使得可以用contains方法来判断列表中是否存在Music类的实例

@@ -4,29 +4,26 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.simplemusic.bean.Music;
 import com.example.simplemusic.adapter.MusicAdapter;
 import com.example.simplemusic.R;
-import com.example.simplemusic.util.Utils;
 import com.example.simplemusic.service.MusicService;
 
 import java.util.ArrayList;
@@ -37,7 +34,6 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     private ListView musicListView;
     private TextView playingTitleView;
     private TextView playingArtistView;
-    private ImageView playingImgView;
     private ImageView btnPlayOrPause;
 
     private List<Music> localMusicList;
@@ -50,15 +46,11 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_localmusic);
         //初始化
-        initView();
-
+        init();
         // 列表项点击事件
-        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Music music = localMusicList.get(position);
-                serviceBinder.addPlayList(music);
-            }
+        musicListView.setOnItemClickListener((parent, view, position, id) -> {
+            Music music = localMusicList.get(position);
+            serviceBinder.addPlayList(music);
         });
     }
 
@@ -85,14 +77,13 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void initView() {
+    private void init() {
         //初始化控件
         ImageView btn_playAll = findViewById(R.id.play_all);
         musicCountView = findViewById(R.id.play_all_title);
         ImageView btn_refresh = findViewById(R.id.refresh);
         musicListView = findViewById(R.id.music_list);
         LinearLayout playerToolView = findViewById(R.id.player);
-        playingImgView = findViewById(R.id.playing_img);
         playingTitleView = findViewById(R.id.playing_title);
         playingArtistView = findViewById(R.id.playing_artist);
         btnPlayOrPause = findViewById(R.id.play_or_pause);
@@ -120,10 +111,8 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         // 绑定成功时调用
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
             // 绑定成功后，取得MusicSercice提供的接口
             serviceBinder = (MusicService.MusicServiceBinder) service;
-
             // 注册监听器
             serviceBinder.registerOnStateChangeListener(listener);
 
@@ -134,25 +123,11 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                 btnPlayOrPause.setImageResource(R.drawable.zanting);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                ContentResolver resolver = getContentResolver();
-                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-                Glide.with(getApplicationContext())
-                        .load(img)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(playingImgView);
             } else if (item != null) {
                 // 当前有可播放音乐但没有播放
                 btnPlayOrPause.setImageResource(R.drawable.bofang);
                 playingTitleView.setText(item.title);
                 playingArtistView.setText(item.artist);
-                ContentResolver resolver = getContentResolver();
-                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-                Glide.with(getApplicationContext())
-                        .load(img)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(playingImgView);
             }
         }
 
@@ -176,13 +151,6 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
             btnPlayOrPause.setEnabled(true);
-            ContentResolver resolver = getContentResolver();
-            Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-            Glide.with(getApplicationContext())
-                    .load(img)
-                    .placeholder(R.drawable.defult_music_img)
-                    .error(R.drawable.defult_music_img)
-                    .into(playingImgView);
         }
 
         @Override
@@ -227,12 +195,9 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                     String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
                     String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     long duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION));
-                    int albumId = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM_ID));
                     int isMusic = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.IS_MUSIC));
                     if (isMusic != 0 && duration / (500 * 60) >= 2) {
-                        //再通过专辑Id组合出音乐封面的Uri地址
-                        Uri musicPic = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
-                        Music data = new Music(musicUri.toString(), title, artist, musicPic.toString());
+                        Music data = new Music(musicUri.toString(), title, artist);
                         //切换到主线程进行更新
                         publishProgress(data);
                     }
@@ -272,5 +237,10 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         updateTask = null;
         localMusicList.clear();
         unbindService(mServiceConnection);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }

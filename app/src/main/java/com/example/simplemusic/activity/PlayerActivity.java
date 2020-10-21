@@ -2,10 +2,8 @@ package com.example.simplemusic.activity;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -18,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.simplemusic.bean.Music;
 import com.example.simplemusic.R;
 import com.example.simplemusic.util.Utils;
@@ -41,7 +38,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_player);
 
         //初始化
-        initActivity();
+        init();
     }
 
     // 控件监听
@@ -65,7 +62,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void initActivity() {
+    private void init() {
         musicTitleView = findViewById(R.id.title);
         musicArtistView = findViewById(R.id.artist);
         musicImgView = findViewById(R.id.imageView);
@@ -119,10 +116,8 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         public void onServiceConnected(ComponentName name, IBinder service) {
             //绑定成功后，取得MusicSercice提供的接口
             serviceBinder = (MusicService.MusicServiceBinder) service;
-
             //注册监听器
-            serviceBinder.registerOnStateChangeListener(listenr);
-
+            serviceBinder.registerOnStateChangeListener(listener);
             //获得当前音乐
             Music item = serviceBinder.getCurrentMusic();
 
@@ -135,37 +130,18 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
                 musicArtistView.setText(item.artist);
                 btnPlayOrPause.setImageResource(R.drawable.ic_pause);
                 rotateAnimator.playAnimator();
-                ContentResolver resolver = getContentResolver();
-                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-                Glide.with(getApplicationContext())
-                        .load(img)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(musicImgView);
-            } else {
-                //当前有可播放音乐但没有播放
-                musicTitleView.setText(item.title);
-                musicArtistView.setText(item.artist);
-                btnPlayOrPause.setImageResource(R.drawable.ic_play);
-                ContentResolver resolver = getContentResolver();
-                Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-                Glide.with(getApplicationContext())
-                        .load(img)
-                        .placeholder(R.drawable.defult_music_img)
-                        .error(R.drawable.defult_music_img)
-                        .into(musicImgView);
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             //断开连接之后, 注销监听器
-            serviceBinder.unregisterOnStateChangeListener(listenr);
+            serviceBinder.unregisterOnStateChangeListener(listener);
         }
     };
 
     //实现监听器监听MusicService的变化，
-    private final MusicService.OnStateChangeListenr listenr = new MusicService.OnStateChangeListenr() {
+    private final MusicService.OnStateChangeListenr listener = new MusicService.OnStateChangeListenr() {
 
         @Override
         public void onPlayProgressChange(long played, long duration) {
@@ -182,13 +158,6 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
             musicArtistView.setText(item.artist);
             btnPlayOrPause.setImageResource(R.drawable.ic_pause);
             rotateAnimator.playAnimator();
-            ContentResolver resolver = getContentResolver();
-            Bitmap img = Utils.getLocalMusicBmp(resolver, item.imgUrl);
-            Glide.with(getApplicationContext())
-                    .load(img)
-                    .placeholder(R.drawable.defult_music_img)
-                    .error(R.drawable.defult_music_img)
-                    .into(musicImgView);
         }
 
         @Override
