@@ -19,19 +19,22 @@ import java.util.List;
 
 public class MusicService extends Service {
     private MediaPlayer player;
-    private List<OnStateChangeListenr> listenerList;
+    private List<OnStateChangeListener> listenerList;
     private MusicServiceBinder binder;
     private AudioManager audioManager;
-    private Music currentMusic; // 当前就绪的音乐
-    private boolean autoPlayAfterFocus;    // 获取焦点之后是否自动播放
-    private boolean isNeedReload;     // 播放时是否需要重新加载
+    // 当前就绪的音乐
+    private Music currentMusic;
+    // 获取焦点之后是否自动播放
+    private boolean autoPlayAfterFocus;
+    // 播放时是否需要重新加载
+    private boolean isNeedReload;
     private final Handler handler = new Handler(Looper.myLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 66) {//通知监听者当前的播放进度
                 long played = player.getCurrentPosition();
                 long duration = player.getDuration();
-                for (OnStateChangeListenr l : listenerList) {
+                for (OnStateChangeListener l : listenerList) {
                     l.onPlayProgressChange(played, duration);
                 }
                 //间隔一秒发送一次更新播放进度的消息
@@ -43,10 +46,13 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        listenerList = new ArrayList<>();    //初始化监听器列表
-        player = new MediaPlayer();   //初始化播放器
+        //初始化监听器列表
+        listenerList = new ArrayList<>();
+        //初始化播放器
+        player = new MediaPlayer();
         binder = new MusicServiceBinder();
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE); //获得音频管理服务
+        //获得音频管理服务
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
     }
 
     @Override
@@ -76,7 +82,9 @@ public class MusicService extends Service {
                 player = MediaPlayer.create(MusicService.this, currentMusic.songUrl);
             }
             player.start();
-            for (OnStateChangeListenr l : listenerList) {
+            //设置播放完成的监听器(必须放在start之后)
+            player.setOnCompletionListener(onCompletionListener);
+            for (OnStateChangeListener l : listenerList) {
                 l.onPlay(currentMusic);
             }
             isNeedReload = true;
@@ -92,7 +100,7 @@ public class MusicService extends Service {
     //暂停
     public void pause() {
         player.pause();
-        for (OnStateChangeListenr l : listenerList) {
+        for (OnStateChangeListener l : listenerList) {
             l.onPause();
         }
         // 暂停后不需要重新加载
@@ -108,6 +116,12 @@ public class MusicService extends Service {
         int position = player.getCurrentPosition();
         player.seekTo(position - 10000);
     }
+
+    //当前歌曲播放完成的监听器
+    private final MediaPlayer.OnCompletionListener onCompletionListener = mp -> {
+        isNeedReload = true;
+        play();
+    };
 
     //将音乐拖动到指定的时间
     public void seekTo(int pos) {
@@ -128,12 +142,12 @@ public class MusicService extends Service {
     }
 
     // 注册监听器
-    public void registerOnStateChangeListener(OnStateChangeListenr l) {
+    public void registerOnStateChangeListener(OnStateChangeListener l) {
         listenerList.add(l);
     }
 
     // 注销监听器
-    public void unregisterOnStateChangeListener(OnStateChangeListenr l) {
+    public void unregisterOnStateChangeListener(OnStateChangeListener l) {
         listenerList.remove(l);
     }
 
@@ -159,12 +173,13 @@ public class MusicService extends Service {
     }
 
     //对外监听器接口
-    public interface OnStateChangeListenr {
-        void onPlayProgressChange(long played, long duration);  //播放进度变化
-
-        void onPlay(Music item);    //播放状态变化
-
-        void onPause();   //播放状态变化
+    public interface OnStateChangeListener {
+        //播放进度变化
+        void onPlayProgressChange(long played, long duration);
+        //播放状态变化
+        void onPlay(Music item);
+        //播放状态变化
+        void onPause();
     }
 
     //焦点控制
