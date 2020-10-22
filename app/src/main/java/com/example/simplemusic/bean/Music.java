@@ -5,9 +5,9 @@ import java.util.Objects;
 public class Music {
     public String artist;     //歌手
     public String title;      //歌曲名
-    public String songUrl;    //歌曲地址
+    public int songUrl;    //歌曲地址
 
-    public Music(String songUrl, String title, String artist) {
+    public Music(int songUrl, String title, String artist) {
         this.title = title;
         this.artist = artist;
         this.songUrl = songUrl;

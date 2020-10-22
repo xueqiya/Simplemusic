@@ -11,19 +11,17 @@ import android.widget.ImageView;
 
 public class RotateAnimator extends AppCompatImageView {
     ImageView imageView;
-    ImageView Needle;
     private float angle, angle2;
     private float viewHeight, viewWidth;
     private MusicAnim musicAnim;
 
-    public RotateAnimator(Context context, ImageView imageView, ImageView imageView1) {
+    public RotateAnimator(Context context, ImageView imageView) {
         super(context);
-        init(imageView, imageView1);
+        init(imageView);
     }
 
-    public void init(ImageView imageView, ImageView imageView1) {
+    public void init(ImageView imageView) {
         this.imageView = imageView;
-        this.Needle = imageView1;
         angle = angle2 = 0;
         viewHeight = viewWidth = 1;
     }
@@ -59,7 +57,6 @@ public class RotateAnimator extends AppCompatImageView {
         animation1.setRepeatCount(0);
         animation1.setFillAfter(true);
         animation1.setStartOffset(0);
-        Needle.startAnimation(animation1);
     }
 
     final RotateAnimation animation = new RotateAnimation(-35f, 0f, Animation.RELATIVE_TO_SELF, 0.1f, Animation.RELATIVE_TO_SELF, 0.15f);
@@ -77,7 +74,6 @@ public class RotateAnimator extends AppCompatImageView {
         musicAnim.setDuration(360000000);
         musicAnim.setInterpolator(new LinearInterpolator());
         musicAnim.setRepeatCount(-1);
-        Needle.startAnimation(animation);
         imageView.startAnimation(musicAnim);
         invalidate();
     }

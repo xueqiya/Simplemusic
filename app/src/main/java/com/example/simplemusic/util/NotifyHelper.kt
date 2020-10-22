@@ -7,7 +7,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.simplemusic.App.Companion.appContext
-import com.example.simplemusic.R
 
 object NotifyHelper {
     private var notification: NotificationCompat.Builder? = null
@@ -17,10 +16,7 @@ object NotifyHelper {
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel(
-                    notificationChannelId, notificationChannelName,
-                    NotificationManager.IMPORTANCE_LOW
-            ).apply {
+            NotificationChannel(notificationChannelId, notificationChannelName, NotificationManager.IMPORTANCE_HIGH).apply {
                 this.setShowBadge(true)
                 this.enableLights(true)
                 this.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE
@@ -32,15 +28,12 @@ object NotifyHelper {
 
     @JvmStatic
     fun notify(title: String, artist: String): Notification {
-        notification = notification
-                ?: NotificationCompat.Builder(appContext, notificationChannelId)
-                        .setContentTitle(title)
-                        .setContentText(artist)
-                        .setPriority(NotificationCompat.PRIORITY_MIN)
-                        .setSmallIcon(R.drawable.defult_music_img)
-                        .setCategory(NotificationCompat.CATEGORY_PROGRESS)
-                        .setOngoing(true)
-                        .setAutoCancel(true)
+        notification = notification ?: NotificationCompat.Builder(appContext, notificationChannelId)
+                .setContentTitle(title)
+                .setContentText(artist)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setOngoing(true)
         val build = notification!!.build()
         notificationManager.notify(999, build)
         return build

@@ -20,17 +20,17 @@ import com.example.simplemusic.bean.Music;
 import com.example.simplemusic.R;
 import com.example.simplemusic.util.Utils;
 import com.example.simplemusic.service.MusicService;
+import com.example.simplemusic.view.RotateAnimator;
 
 public class PlayerActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView musicTitleView;
     private TextView musicArtistView;
-    private ImageView musicImgView;
     private ImageView btnPlayOrPause;
     private TextView nowTimeView;
     private TextView totalTimeView;
     private SeekBar seekBar;
-    private com.example.simplemusic.view.RotateAnimator rotateAnimator;
-    private MusicService.MusicServiceBinder serviceBinder;
+    private RotateAnimator rotateAnimator;
+    private MusicService musicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +46,21 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.play_pre:
+            case R.id.forward:
                 // 上一首
-                serviceBinder.playPre();
+                musicService.forward();
                 break;
-            case R.id.play_next:
+            case R.id.back:
                 // 下一首
-                serviceBinder.playNext();
+                musicService.back();
                 break;
             case R.id.play_or_pause:
                 // 播放或暂停
-                serviceBinder.playOrPause();
+                if (musicService.isPlaying()) {
+                    musicService.pause();
+                } else {
+                    musicService.play();
+                }
                 break;
             default:
         }
@@ -65,14 +69,13 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     private void init() {
         musicTitleView = findViewById(R.id.title);
         musicArtistView = findViewById(R.id.artist);
-        musicImgView = findViewById(R.id.imageView);
+        ImageView musicImgView = findViewById(R.id.imageView);
         btnPlayOrPause = findViewById(R.id.play_or_pause);
-        ImageView btnPlayPre = findViewById(R.id.play_pre);
-        ImageView btnPlayNext = findViewById(R.id.play_next);
+        ImageView forward = findViewById(R.id.forward);
+        ImageView back = findViewById(R.id.back);
         seekBar = findViewById(R.id.seekbar);
         nowTimeView = findViewById(R.id.current_time);
         totalTimeView = findViewById(R.id.total_time);
-        ImageView needleView = findViewById(R.id.ivNeedle);
 
         // ToolBar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -82,13 +85,13 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         setSupportActionBar(toolbar);
 
         btnPlayOrPause.setOnClickListener(this);
-        btnPlayPre.setOnClickListener(this);
-        btnPlayNext.setOnClickListener(this);
+        forward.setOnClickListener(this);
+        back.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 //拖动进度条时
-                nowTimeView.setText(Utils.formatTime((long) progress));
+                nowTimeView.setText(Utils.formatTime(progress));
             }
 
             @Override
@@ -97,12 +100,12 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                serviceBinder.seekTo(seekBar.getProgress());
+                musicService.seekTo(seekBar.getProgress());
             }
         });
 
         //初始化动画
-        rotateAnimator = new com.example.simplemusic.view.RotateAnimator(this, musicImgView, needleView);
+        rotateAnimator = new com.example.simplemusic.view.RotateAnimator(this, musicImgView);
         rotateAnimator.set_Needle();
 
         // 绑定service
@@ -115,28 +118,33 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             //绑定成功后，取得MusicSercice提供的接口
-            serviceBinder = (MusicService.MusicServiceBinder) service;
+            musicService = ((MusicService.MusicServiceBinder) service).getService();
             //注册监听器
-            serviceBinder.registerOnStateChangeListener(listener);
+            musicService.registerOnStateChangeListener(listener);
             //获得当前音乐
-            Music item = serviceBinder.getCurrentMusic();
+            Music item = musicService.getCurrentMusic();
 
             if (item == null) {
                 //当前音乐为空, seekbar不可拖动
                 seekBar.setEnabled(false);
-            } else if (serviceBinder.isPlaying()) {
+            } else if (musicService.isPlaying()) {
                 //如果正在播放音乐, 更新信息
                 musicTitleView.setText(item.title);
                 musicArtistView.setText(item.artist);
                 btnPlayOrPause.setImageResource(R.drawable.ic_pause);
                 rotateAnimator.playAnimator();
+            } else {
+                //如果当前暂停
+                musicTitleView.setText(item.title);
+                musicArtistView.setText(item.artist);
+                btnPlayOrPause.setImageResource(R.drawable.ic_play);
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             //断开连接之后, 注销监听器
-            serviceBinder.unregisterOnStateChangeListener(listener);
+            musicService.unregisterOnStateChangeListener(listener);
         }
     };
 

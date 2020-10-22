@@ -103,14 +103,14 @@
         android:paddingRight="20dp"
         android:paddingBottom="20dp">
 
-        <!--设置上一曲按钮的布局-->
+        <!--快退-->
         <ImageView
-            android:id="@+id/play_pre"
+            android:id="@+id/back"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_pre" />
 
-        <!--设置中间暂停和播放的按钮的布局-->
+        <!--暂停和播放-->
         <ImageView
             android:id="@+id/play_or_pause"
             android:layout_width="70dp"
@@ -119,14 +119,11 @@
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_play" />
 
-        <!--设置下一曲按钮的布局-->
+        <!--快进-->
         <ImageView
-            android:id="@+id/play_next"
+            android:id="@+id/forward"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_next" />
-
     </LinearLayout>
-
-
 </RelativeLayout>
