@@ -1,129 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_blackground"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical">
 
-    <!--定义标题栏的布局-->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        app:subtitleTextAppearance="@style/netease_toolbar_subtitle"
-        app:titleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:singleLine="true"
-                android:textColor="#000000"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/artist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </androidx.appcompat.widget.Toolbar>
-
-    <!--设置标题栏的布局视图-->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@id/toolbar"
-        android:background="#33ffffff" />
-
-    <!--include包含唱片的布局，并将其放在播放栏上面-->
-    <include
-        layout="@layout/layout_discview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/music_time"
-        android:layout_below="@id/toolbar" />
-
-    <!--使用相对布局设置唱片在播放页面的中的位置-->
-    <RelativeLayout
-        android:id="@+id/music_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/play_control"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp">
-
-        <!--设置播放时间的文本布局(起始)-->
-        <TextView
-            android:id="@+id/current_time"
-            style="@style/netease_music_time_text_style"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true" />
-
-        <!--设置播放进度条的布局-->
-        <SeekBar
-            android:id="@+id/seekbar"
-            style="@style/netease_music_time_seek_bar_style"
-            android:layout_centerInParent="true"
-            android:layout_toStartOf="@+id/total_time"
-            android:layout_toEndOf="@id/current_time"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp" />
-
-        <!--设置播放时间的文本布局(结束)-->
-        <TextView
-            android:id="@+id/total_time"
-            style="@style/netease_music_time_text_style"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
-
-    </RelativeLayout>
-
-    <!--设置最下方的播放控制按钮的布局-->
     <LinearLayout
-        android:id="@+id/play_control"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="20dp">
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@drawable/ic_blackground"
+        android:orientation="vertical">
+        <!--定义标题栏的布局-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            app:subtitleTextAppearance="@style/netease_toolbar_subtitle"
+            app:titleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
 
-        <!--快退-->
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_pre" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <!--暂停和播放-->
-        <ImageView
-            android:id="@+id/play_or_pause"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/ic_play" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
-        <!--快进-->
-        <ImageView
-            android:id="@+id/forward"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_next" />
+                <TextView
+                    android:id="@+id/artist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!--设置标题栏的布局视图-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@id/toolbar"
+            android:background="#33ffffff" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="50dp"
+            android:src="@drawable/defult_music_img" />
+
+        <!--使用相对布局设置唱片在播放页面的中的位置-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp">
+
+            <!--设置播放时间的文本布局(起始)-->
+            <TextView
+                android:id="@+id/current_time"
+                style="@style/netease_music_time_text_style"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
+
+            <!--设置播放进度条的布局-->
+            <SeekBar
+                android:id="@+id/seekbar"
+                style="@style/netease_music_time_seek_bar_style"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@+id/total_time"
+                android:layout_toEndOf="@id/current_time"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp" />
+
+            <!--设置播放时间的文本布局(结束)-->
+            <TextView
+                android:id="@+id/total_time"
+                style="@style/netease_music_time_text_style"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+        <!--设置最下方的播放控制按钮的布局-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp">
+
+            <!--快退-->
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_pre" />
+
+            <!--暂停和播放-->
+            <ImageView
+                android:id="@+id/play_or_pause"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_play" />
+
+            <!--快进-->
+            <ImageView
+                android:id="@+id/forward"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_next" />
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        tools:listitem="@layout/music_item" />
+
+</LinearLayout>

@@ -30,6 +30,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
     private List<Music> localMusicList;
     private MusicService musicService;
+    private LinearLayout playerToolView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         musicListView.setOnItemClickListener((parent, view, position, id) -> {
             Music music = localMusicList.get(position);
             musicService.addPlayList(music);
+            setPlayActivity();
         });
     }
 
@@ -53,7 +55,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
 
     private void init() {
         musicListView = findViewById(R.id.music_list);
-        LinearLayout playerToolView = findViewById(R.id.player);
+        playerToolView = findViewById(R.id.player);
         playingTitleView = findViewById(R.id.playing_title);
         playingArtistView = findViewById(R.id.playing_artist);
         btnPlayOrPause = findViewById(R.id.play_or_pause);
@@ -74,9 +76,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.player:
-                Intent intent = new Intent(LocalMusicActivity.this, PlayerActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.bottom_in, R.anim.bottom_silent);
+                setPlayActivity();
                 break;
             case R.id.play_or_pause:
                 if (musicService.isPlaying()) {
@@ -86,6 +86,12 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
                 }
                 break;
         }
+    }
+
+    private void setPlayActivity() {
+        Intent intent = new Intent(LocalMusicActivity.this, PlayerActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.bottom_in, R.anim.bottom_silent);
     }
 
     // 定义与服务的连接的匿名类
@@ -129,6 +135,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onPlay(Music item) {
             // 播放状态变为播放时
+            playerToolView.setVisibility(View.VISIBLE);
             btnPlayOrPause.setImageResource(R.drawable.zanting);
             playingTitleView.setText(item.title);
             playingArtistView.setText(item.artist);
@@ -138,6 +145,7 @@ public class LocalMusicActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onPause() {
             // 播放状态变为暂停时
+            playerToolView.setVisibility(View.GONE);
             btnPlayOrPause.setImageResource(R.drawable.bofang);
             btnPlayOrPause.setEnabled(true);
         }
